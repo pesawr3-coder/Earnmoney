@@ -1,0 +1,289 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Earn Hub</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#07131f;color:#fff;font-family:Arial,sans-serif}
+header{padding:18px;background:#102638;display:flex;justify-content:space-between;align-items:center}
+.logo{font-size:24px;font-weight:bold;color:#2ce0a0}
+.logo span{color:#f5c65b}
+header button,.btn{background:#13a878;color:white;border:0;padding:11px 15px;border-radius:9px;cursor:pointer}
+.container{max-width:850px;margin:auto;padding:16px}
+.page{display:none}
+.page.active{display:block}
+h2{font-size:21px;margin:20px 0 12px}
+.muted{color:#9aafbd;font-size:13px}
+.balance{background:linear-gradient(130deg,#087c60,#123c45);padding:24px;border-radius:18px;margin:20px 0}
+.balance h1{font-size:35px;margin:12px 0}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.card{background:#102638;padding:17px;border:1px solid #254354;border-radius:14px}
+.card h3{font-size:13px;color:#a7bac8;margin-bottom:12px}
+.card strong{font-size:22px;color:#2cdda0}
+.level,.history{background:#102638;padding:15px;border-radius:12px;margin:10px 0;border:1px solid #254354}
+.level{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.level button{background:#167d63;color:white;border:0;padding:9px;border-radius:8px}
+.question{background:#102638;padding:17px;border-radius:14px}
+.option{width:100%;text-align:left;background:#19374a;color:white;border:1px solid #315165;padding:13px;margin-top:9px;border-radius:9px}
+input,select{width:100%;padding:13px;margin:8px 0;background:#0b1d2a;border:1px solid #315165;color:white;border-radius:9px}
+.progress{height:10px;background:#263e4d;border-radius:20px;margin:12px 0;overflow:hidden}
+.progress div{height:100%;width:0;background:#2cdda0}
+nav{position:sticky;bottom:0;background:#102638;display:flex;justify-content:space-around;padding:13px 3px}
+nav button{background:none;border:0;color:#b6c9d4;font-size:12px}
+nav button.active{color:#2ce0a0}
+.notice{background:#183c35;padding:12px;border-radius:9px;color:#a5f5d5;font-size:13px;margin:12px 0}
+footer{text-align:center;color:#78909f;padding:20px;font-size:12px}
+</style>
+</head>
+<body>
+
+<header>
+ <div class="logo">EARN<span>HUB</span></div>
+ <button onclick="show('profile')">Profile</button>
+</header>
+
+<div class="container">
+
+<!-- HOME -->
+<section id="home" class="page active">
+ <h2>Welcome to Earn Hub 👋</h2>
+ <p class="muted">Your rewards dashboard</p>
+
+ <div class="balance">
+  <small>DEMO AVAILABLE BALANCE</small>
+  <h1 id="balance">Rs 0</h1>
+  <small>Demo credits only — no real money</small>
+ </div>
+
+ <div class="grid">
+  <div class="card"><h3>Pending credits</h3><strong id="pending">Rs 0</strong></div>
+  <div class="card"><h3>Completed tasks</h3><strong id="completed">0</strong></div>
+  <div class="card"><h3>Activity days</h3><strong id="days">0/40</strong></div>
+  <div class="card"><h3>Membership</h3><strong>Free</strong></div>
+ </div>
+
+ <h2>Daily progress</h2>
+ <div class="progress"><div id="bar"></div></div>
+ <p class="muted" id="progressText">0 of 40 days completed</p>
+
+ <h2>Quick actions</h2>
+ <div class="grid">
+  <div class="card" onclick="show('tasks')">📝<h3>Daily Tasks</h3></div>
+  <div class="card" onclick="show('wallet')">💰<h3>My Wallet</h3></div>
+  <div class="card" onclick="show('levels')">🏆<h3>Membership</h3></div>
+  <div class="card" onclick="show('withdraw')">💳<h3>Withdraw Demo</h3></div>
+ </div>
+</section>
+
+<!-- TASKS -->
+<section id="tasks" class="page">
+ <h2>Daily Question</h2>
+ <div class="question">
+  <p>Which language is primarily used to structure web pages?</p>
+  <button class="option" onclick="answer(this,false)">A. Python</button>
+  <button class="option" onclick="answer(this,true)">B. HTML</button>
+  <button class="option" onclick="answer(this,false)">C. C++</button>
+  <p id="answerResult" class="notice">Choose your answer.</p>
+ </div>
+ <h2>Daily tasks</h2>
+ <div class="level">
+  <div><b>Read today's learning tip</b><p class="muted">Learn something new</p></div>
+  <button onclick="completeTask('read')">Complete</button>
+ </div>
+ <div class="level">
+  <div><b>Visit the safety guide</b><p class="muted">Learn online safety</p></div>
+  <button onclick="completeTask('safety')">Complete</button>
+ </div>
+</section>
+
+<!-- WALLET -->
+<section id="wallet" class="page">
+ <h2>My Wallet</h2>
+ <div class="balance">
+  <small>DEMO CREDITS</small>
+  <h1 id="walletBalance">Rs 0</h1>
+ </div>
+ <div class="notice">This is a demonstration wallet. Credits have no cash value.</div>
+ <h2>Transaction history</h2>
+ <div id="history"><p class="muted">No transactions yet.</p></div>
+</section>
+
+<!-- LEVELS -->
+<section id="levels" class="page">
+ <h2>Membership Levels</h2>
+ <p class="muted">All levels are free. No deposit required.</p>
+ <div id="levelList"></div>
+</section>
+
+<!-- WITHDRAW -->
+<section id="withdraw" class="page">
+ <h2>Demo Withdrawal Request</h2>
+ <div class="notice">Demo only. No real payment or money transfer is available.</div>
+ <label>Demo amount</label>
+ <input type="number" id="amount" placeholder="Enter amount">
+ <label>Payment method (demonstration)</label>
+ <select id="method">
+  <option>Easypaisa</option>
+  <option>JazzCash</option>
+ </select>
+ <button class="btn" onclick="requestWithdrawal()">Submit demo request</button>
+ <h2>My requests</h2>
+ <div id="requests"></div>
+</section>
+
+<!-- PROFILE -->
+<section id="profile" class="page">
+ <h2>My Profile</h2>
+ <div class="card">
+  <p>Demo user</p>
+  <p class="muted">Local device profile</p>
+  <br>
+  <button class="btn" onclick="resetDemo()">Reset demo data</button>
+ </div>
+ <h2>About Earn Hub</h2>
+ <p class="muted">Earn Hub demo is a learning and task-tracking interface. It does not promise income or process payments.</p>
+</section>
+
+</div>
+
+<nav>
+ <button class="active" onclick="show('home',this)">⌂<br>Home</button>
+ <button onclick="show('tasks',this)">☑<br>Tasks</button>
+ <button onclick="show('wallet',this)">▣<br>Wallet</button>
+ <button onclick="show('levels',this)">★<br>Levels</button>
+ <button onclick="show('profile',this)">●<br>Profile</button>
+</nav>
+
+<footer>© 2026 Earn Hub | Demo Application</footer>
+
+<script>
+const defaults={
+ balance:0,
+ pending:0,
+ completed:0,
+ days:0,
+ tasks:[],
+ requests:[],
+ history:[]
+};
+
+let data;
+try{
+ data=JSON.parse(localStorage.getItem("earnhub_data"))||{...defaults};
+}catch(e){
+ data={...defaults};
+}
+
+function save(){
+ localStorage.setItem("earnhub_data",JSON.stringify(data));
+ update();
+}
+
+function show(id,button){
+ document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+ document.getElementById(id).classList.add("active");
+ document.querySelectorAll("nav button").forEach(b=>b.classList.remove("active"));
+ if(button)button.classList.add("active");
+}
+
+function update(){
+ document.getElementById("balance").textContent="Rs "+data.balance;
+ document.getElementById("walletBalance").textContent="Rs "+data.balance;
+ document.getElementById("pending").textContent="Rs "+data.pending;
+ document.getElementById("completed").textContent=data.completed;
+ document.getElementById("days").textContent=data.days+"/40";
+ document.getElementById("bar").style.width=(data.days/40*100)+"%";
+ document.getElementById("progressText").textContent=data.days+" of 40 days completed";
+
+ document.getElementById("history").innerHTML=data.history.length?
+ data.history.map(x=>'<div class="history">'+x+'</div>').join(""):'<p class="muted">No transactions yet.</p>';
+
+ document.getElementById("requests").innerHTML=data.requests.length?
+ data.requests.map(x=>'<div class="history">'+x.amount+' demo credits — '+x.method+' — '+x.status+'</div>').join(""):'<p class="muted">No requests yet.</p>';
+}
+
+function answer(button,correct){
+ const buttons=document.querySelectorAll(".option");
+ buttons.forEach(b=>b.disabled=true);
+ const result=document.getElementById("answerResult");
+ if(correct){
+  result.textContent="Correct answer! Question completed.";
+  result.style.color="#45e5a9";
+  if(!data.tasks.includes("question")){
+   data.tasks.push("question");
+   data.completed++;
+   data.days=Math.min(40,data.days+1);
+   data.history.unshift("Completed daily question");
+   save();
+  }
+ }else{
+  result.textContent="Incorrect. Try again tomorrow.";
+  result.style.color="#ffb1a8";
+ }
+}
+
+function completeTask(id){
+ if(data.tasks.includes(id)){
+  alert("You already completed this task.");
+  return;
+ }
+ data.tasks.push(id);
+ data.completed++;
+ data.days=Math.min(40,data.days+1);
+ data.history.unshift("Completed task: "+id);
+ save();
+ alert("Task completed!");
+}
+
+function requestWithdrawal(){
+ const amount=Number(document.getElementById("amount").value);
+ const method=document.getElementById("method").value;
+ if(!amount||amount<=0){
+  alert("Enter a valid amount.");
+  return;
+ }
+ data.requests.unshift({
+  amount:amount,
+  method:method,
+  status:"Demo pending"
+ });
+ data.pending+=amount;
+ save();
+ document.getElementById("amount").value="";
+ alert("Demo request submitted.");
+}
+
+const levels=[
+ "Beginner",
+ "Learner",
+ "Explorer",
+ "Achiever",
+ "Master"
+];
+
+document.getElementById("levelList").innerHTML=levels.map((name,i)=>
+ '<div class="level"><div><b>Level '+(i+1)+': '+name+'</b><p class="muted">Free membership</p></div><button onclick="joinLevel('+i+')">Join free</button></div>'
+).join("");
+
+function joinLevel(i){
+ localStorage.setItem("earnhub_level",levels[i]);
+ alert("You joined "+levels[i]+" level in demo mode.");
+}
+
+function resetDemo(){
+ if(confirm("Reset all local demo data?")){
+  localStorage.removeItem("earnhub_data");
+  localStorage.removeItem("earnhub_level");
+  data={...defaults};
+  save();
+  alert("Demo reset complete.");
+ }
+}
+
+update();
+</script>
+</body>
+</html>
